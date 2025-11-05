@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "totm-convex-mcp": {
+      "command": "/Users/conormeldrum/.nvm/versions/node/v22.16.0/bin/node",
+      "args": [
+        "--env-file",
+        "/Users/conormeldrum/totm-convex-mcp/.env",
+        "/Users/conormeldrum/totm-convex-mcp/build/index.js"
+      ],
+      "cwd": "/Users/conormeldrum/totm-convex-mcp"
+    }
+  }
+}
