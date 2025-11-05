@@ -38,6 +38,17 @@ export const characterTools = [
       required: ["encounterId", "characterId"],
     },
   },
+  {
+    name: "delete_player_character",
+    description: "Delete a player character from the system.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        characterId: { type: "string", description: "The ID of the player character to delete" },
+      },
+      required: ["characterId"],
+    },
+  },
 ] as const satisfies readonly ToolDefinition[];
 
 export async function handleCharacterTool(
@@ -92,6 +103,25 @@ export async function handleCharacterTool(
       return {
         content: [
           { type: "text", text: JSON.stringify({ success: result, message: "Player character removed from encounter successfully" }, null, 2) },
+        ],
+      };
+    }
+
+    case "delete_player_character": {
+      if (!args || typeof args.characterId !== "string") {
+        throw new Error("characterId parameter is required and must be a string");
+      }
+      const result = await callConvexFunction("myFunctions:deleteCharacter", { id: args.characterId }, "mutation");
+      return {
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify(
+              { success: result, message: `Player character "${args.characterId}" deleted successfully` },
+              null,
+              2
+            ),
+          },
         ],
       };
     }

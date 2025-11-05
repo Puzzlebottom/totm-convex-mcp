@@ -37,6 +37,17 @@ export const monsterTools = [
       required: ["monsterId"],
     },
   },
+  {
+    name: "delete_monster_template",
+    description: "Delete a monster template from the system.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        templateId: { type: "string", description: "The ID of the monster template to delete" },
+      },
+      required: ["templateId"],
+    },
+  },
 ] as const satisfies readonly ToolDefinition[];
 
 export async function handleMonsterTool(
@@ -91,6 +102,25 @@ export async function handleMonsterTool(
       return {
         content: [
           { type: "text", text: JSON.stringify({ success: result, message: "Monster removed from encounter successfully" }, null, 2) },
+        ],
+      };
+    }
+
+    case "delete_monster_template": {
+      if (!args || typeof args.templateId !== "string") {
+        throw new Error("templateId parameter is required and must be a string");
+      }
+      const result = await callConvexFunction("myFunctions:deleteMonster", { id: args.templateId }, "mutation");
+      return {
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify(
+              { success: result, message: `Monster template "${args.templateId}" deleted successfully` },
+              null,
+              2
+            ),
+          },
         ],
       };
     }

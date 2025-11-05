@@ -22,6 +22,17 @@ export const encounterTools = [
       required: ["name"],
     },
   },
+  {
+    name: "delete_encounter",
+    description: "Delete an encounter from the system.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        encounterId: { type: "string", description: "The ID of the encounter to delete" },
+      },
+      required: ["encounterId"],
+    },
+  },
 ] as const satisfies readonly ToolDefinition[];
 
 export async function handleEncounterTool(
@@ -83,6 +94,25 @@ export async function handleEncounterTool(
             type: "text",
             text: JSON.stringify(
               { success: true, encounterId, message: `Encounter "${args.name}" created successfully` },
+              null,
+              2
+            ),
+          },
+        ],
+      };
+    }
+
+    case "delete_encounter": {
+      if (!args || typeof args.encounterId !== "string") {
+        throw new Error("encounterId parameter is required and must be a string");
+      }
+      const result = await callConvexFunction("myFunctions:deleteEncounter", { id: args.encounterId }, "mutation");
+      return {
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify(
+              { success: result, message: `Encounter "${args.encounterId}" deleted successfully` },
               null,
               2
             ),
