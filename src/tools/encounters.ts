@@ -33,6 +33,14 @@ export const encounterTools = [
       required: ["encounterId"],
     },
   },
+  {
+    name: "list_encounters_by_user",
+    description: "List all encounters for the current user.",
+    inputSchema: {
+      type: "object",
+      properties: {},
+    },
+  },
 ] as const satisfies readonly ToolDefinition[];
 
 export async function handleEncounterTool(
@@ -116,6 +124,18 @@ export async function handleEncounterTool(
               null,
               2
             ),
+          },
+        ],
+      };
+    }
+
+    case "list_encounters_by_user": {
+      const encounters = await callConvexFunction("myFunctions:listEncountersByUser", {}, "query");
+      return {
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify(encounters, null, 2),
           },
         ],
       };

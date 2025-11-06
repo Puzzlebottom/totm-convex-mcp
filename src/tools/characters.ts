@@ -49,6 +49,33 @@ export const characterTools = [
       required: ["characterId"],
     },
   },
+  {
+    name: "list_characters",
+    description: "List all player characters in the system.",
+    inputSchema: {
+      type: "object",
+      properties: {},
+    },
+  },
+  {
+    name: "list_available_characters",
+    description: "List all player characters that are not currently in an encounter.",
+    inputSchema: {
+      type: "object",
+      properties: {},
+    },
+  },
+  {
+    name: "list_characters_by_user",
+    description: "List all player characters for a specific user. If userId is not provided, returns characters for the current user.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        userId: { type: "string", description: "The ID of the user (optional, defaults to current user)" },
+      },
+      required: [],
+    },
+  },
 ] as const satisfies readonly ToolDefinition[];
 
 export async function handleCharacterTool(
@@ -121,6 +148,43 @@ export async function handleCharacterTool(
               null,
               2
             ),
+          },
+        ],
+      };
+    }
+
+    case "list_characters": {
+      const characters = await callConvexFunction("myFunctions:listCharacters", {}, "query");
+      return {
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify(characters, null, 2),
+          },
+        ],
+      };
+    }
+
+    case "list_available_characters": {
+      const characters = await callConvexFunction("myFunctions:listAvailableCharacters", {}, "query");
+      return {
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify(characters, null, 2),
+          },
+        ],
+      };
+    }
+
+    case "list_characters_by_user": {
+      const params = args && args.userId ? { userId: args.userId } : {};
+      const characters = await callConvexFunction("myFunctions:listCharactersByUser", params, "query");
+      return {
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify(characters, null, 2),
           },
         ],
       };

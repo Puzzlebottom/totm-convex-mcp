@@ -48,6 +48,14 @@ export const monsterTools = [
       required: ["templateId"],
     },
   },
+  {
+    name: "list_monster_templates",
+    description: "List all monster templates in the system.",
+    inputSchema: {
+      type: "object",
+      properties: {},
+    },
+  },
 ] as const satisfies readonly ToolDefinition[];
 
 export async function handleMonsterTool(
@@ -120,6 +128,18 @@ export async function handleMonsterTool(
               null,
               2
             ),
+          },
+        ],
+      };
+    }
+
+    case "list_monster_templates": {
+      const templates = await callConvexFunction("myFunctions:listMonsterTemplates", {}, "query");
+      return {
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify(templates, null, 2),
           },
         ],
       };
